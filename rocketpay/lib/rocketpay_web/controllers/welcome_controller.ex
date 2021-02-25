@@ -9,7 +9,6 @@ defmodule RocketpayWeb.WelcomeController do
     |> handle_response(conn)
   end
 
-
   defp handle_response({:ok, %{result: result}}, conn) do
     conn
     |> put_status(:ok)
