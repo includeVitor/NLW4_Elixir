@@ -5,10 +5,9 @@ defmodule Rocketpay.Accounts.Deposit do
   alias Rocketpay.{Account, Repo}
 
   def call(%{"id" => id, "value" => value}) do
-    Multi.new
+    Multi.new()
     |> Multi.run(:account, fn repo, _changes -> get_account(repo, id) end)
-    |> Multi.run(:update_balance, fn repo, %{account: account} ->
-      update_balance(repo, account, value) end)
+    |> Multi.run(:update_balance, fn repo, %{account: account} -> update_balance(repo, account, value) end)
     |> run_transaction()
   end
 
@@ -37,17 +36,15 @@ defmodule Rocketpay.Accounts.Deposit do
   defp update_account({:error, _reason} = error, _repo, _account), do: error
   defp update_account(value, repo, account) do
     params = %{balance: value}
-
     account
     |> Account.changeset(params)
-    |> repo.update()
-
+    |> repo.update
   end
 
   defp run_transaction(multi) do
     case Repo.transaction(multi) do
       {:error, _operation, reason, _changes} -> {:error, reason}
-      {:ok, %{update_balance: account}} -> {:account, account}
+      {:ok, %{update_balance: account}} -> {:ok, account}
     end
   end
 
