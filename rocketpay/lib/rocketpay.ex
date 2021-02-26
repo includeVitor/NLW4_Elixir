@@ -7,5 +7,5 @@ defmodule Rocketpay do
 
   defdelegate deposit(params), to: Deposit , as: :call
 
-  defdelegate withdraw(params), to: Deposit , as: :call
+  defdelegate withdraw(params), to: Withdraw , as: :call
 end
